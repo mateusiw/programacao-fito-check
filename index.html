@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Aplicações Fitossanitárias SPG</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/NWM3Pth.png">
+    <meta name="theme-color" content="#759587">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f2f6f4', 100: '#dfe8e4', 200: '#bfd1c9', 300: '#9db8ad', 400: '#82a294',
+                            500: '#759587', 600: '#5e7b6d', 700: '#4b6357', 800: '#3d4f46', 900: '#33413b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; background: #eef2f7; }
+        .nav-bar { background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .form-card { background: #fff; border-radius: 20px; border: 1.5px solid #e8edf3; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .form-card-header { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 18px 18px 0 0; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+        .section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 5px; display: block; }
+        .fld { width: 100%; border: 1.5px solid #dde3ec; border-radius: 10px; background: #f8fafc; padding: 9px 11px; font-size: 14px; transition: border-color .2s, box-shadow .2s; }
+        .fld:focus { border-color: #759587; box-shadow: 0 0 0 3px rgba(117,149,135,0.15); background: #fff; outline: none; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 12px; font-weight: 800; font-size: 13px; padding: 10px 14px; transition: all .15s; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: #759587; color: #fff; }
+        .btn-primary:hover { background: #5e7b6d; }
+        .btn-dark { background: #1e293b; color: #fff; }
+        .btn-ghost { background: #f1f5f9; color: #334155; border: 1.5px solid #e2e8f0; }
+        .btn-ghost:hover { background: #e2e8f0; }
+        .btn-danger { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fecaca; }
+        .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
+        .st-PENDENTE  { background: #fef3c7; color: #92400e; }
+        .st-PARCIAL   { background: #dbeafe; color: #1e40af; }
+        .st-CONCLUIDA { background: #dcfce7; color: #166534; }
+        .st-ATRASADA  { background: #fee2e2; color: #991b1b; }
+        .st-FEITO     { background: #dcfce7; color: #166534; }
+        .st-NAO_FEITO { background: #fee2e2; color: #991b1b; }
+        .exec-toggle { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 56px; border-radius: 14px; border: 2.5px solid #e2e8f0; background: #f8fafc; font-weight: 900; font-size: 15px; color: #94a3b8; transition: all .15s; }
+        .exec-toggle.on-ok  { border-color: #16a34a; background: #16a34a; color: #fff; }
+        .exec-toggle.on-nok { border-color: #dc2626; background: #dc2626; color: #fff; }
+        .tabs button { flex: 1; padding: 9px 4px; border-radius: 10px; font-size: 12px; font-weight: 800; color: #64748b; }
+        .tabs button.active { background: #fff; color: #1e293b; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .swatch { width: 30px; height: 30px; border-radius: 9px; border: 2px solid rgba(0,0,0,.12); }
+        .swatch.sel { outline: 3px solid #1e293b; outline-offset: 2px; }
+        .thumb { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; border: 1.5px solid #e2e8f0; background: #f1f5f9; }
+        .photo-slot { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 10px; background: #f8fafc; }
+        .prod-table td { padding: 6px 10px; border-bottom: 1px solid #eef2f7; font-size: 13px; }
+        .prod-table tr:last-child td { border-bottom: none; }
+        .fade-in { animation: fadeIn .25s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-28">
+
+    <!-- Navbar -->
+    <div class="nav-bar px-4 py-2.5 flex justify-between items-center sticky top-0 z-40">
+        <button type="button" onclick="irPara('lista')" class="flex items-center gap-3 text-left">
+            <img src="https://i.imgur.com/NWM3Pth.png" alt="Logo SPG" class="w-10 h-10 rounded-xl object-cover border-2 border-brand-500/40 shadow-lg">
+            <div>
+                <h1 class="text-sm font-black text-white leading-tight tracking-wide">SPG SEDE</h1>
+                <p class="text-[10px] text-brand-400 font-bold uppercase tracking-widest">Aplicações Fitossanitárias</p>
+            </div>
+        </button>
+        <div class="flex gap-2">
+            <button id="btnCadeado" type="button" onclick="bloquearProgramador()" class="hidden btn bg-amber-400/20 text-amber-300 border border-amber-300/30 !px-3" title="Modo programador ativo — toque para bloquear">
+                <i data-lucide="lock-open" class="w-4 h-4"></i>
+            </button>
+            <button id="btnModelos" type="button" onclick="abrirModelos()" class="btn bg-white/10 text-white border border-white/15 !px-3" title="Modelos de aplicação">
+                <i data-lucide="library" class="w-4 h-4"></i>
+            </button>
+            <button id="btnAtualizar" type="button" onclick="carregarLista()" class="btn bg-white/10 text-white border border-white/15 !px-3" title="Atualizar">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
+            <button id="btnNova" type="button" onclick="novaProgramacao()" class="btn btn-primary shadow-lg">
+                <i data-lucide="plus" class="w-4 h-4"></i><span>Nova programação</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-3xl mx-auto p-4 space-y-4">
+
+        <!-- ================= LISTA ================= -->
+        <section id="view-lista">
+            <div class="tabs flex gap-1 bg-slate-200/70 p-1 rounded-xl mb-4">
+                <button data-filtro="pendentes" onclick="setFiltro('pendentes')">Pendentes</button>
+                <button data-filtro="concluidas" onclick="setFiltro('concluidas')">Concluídas</button>
+                <button data-filtro="todas" onclick="setFiltro('todas')">Todas</button>
+            </div>
+            <div id="listaProgramacoes" class="space-y-3"></div>
+        </section>
+
+        <!-- ================= EDITOR (PROGRAMADOR) ================= -->
+        <section id="view-editor" class="hidden space-y-4">
+            <div class="form-card overflow-hidden">
+                <div class="form-card-header">
+                    <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-500/20 border border-brand-400/30 shrink-0">
+                        <i data-lucide="calendar-plus" class="w-5 h-5 text-brand-400"></i>
+                    </div>
+                    <div>
+                        <h2 id="editorTitulo" class="text-base font-black text-white leading-tight">Nova programação diária</h2>
+                        <p class="text-[11px] text-slate-400 font-medium mt-0.5">Defina a data, o turno e as operações por bloco</p>
+                    </div>
+                </div>
+                <div class="p-4 grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="section-label">Data</label>
+                        <input id="edData" type="date" class="fld" onchange="atualizarDiaSemana()">
+                    </div>
+                    <div>
+                        <label class="section-label">Dia da semana</label>
+                        <input id="edDia" type="text" class="fld !bg-slate-100" readonly>
+                    </div>
+                    <div>
+                        <label class="section-label">Turno</label>
+                        <select id="edTurno" class="fld">
+                            <option>NOITE</option><option>MANHÃ</option><option>TARDE</option><option>DIA TODO</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="section-label">Programado por</label>
+                        <input id="edResp" type="text" class="fld" placeholder="Seu nome">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="section-label">Observação geral (opcional)</label>
+                        <input id="edObs" type="text" class="fld" placeholder="Ex.: conferir estoque de Speed Oil">
+                    </div>
+                </div>
+            </div>
+
+            <div id="editorOperacoes" class="space-y-4"></div>
+
+            <button type="button" onclick="adicionarOperacao()" class="btn btn-ghost w-full !py-4 border-dashed">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Adicionar operação (bloco)
+            </button>
+
+            <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-slate-200 p-3 z-30">
+                <div class="max-w-3xl mx-auto flex gap-2">
+                    <button type="button" onclick="irPara('lista')" class="btn btn-ghost">Cancelar</button>
+                    <button type="button" onclick="salvarProgramacao()" class="btn btn-primary flex-1 !py-3">
+                        <i data-lucide="save" class="w-4 h-4"></i> Salvar programação
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODELOS ================= -->
+        <section id="view-modelos" class="hidden space-y-4">
+            <div class="form-card overflow-hidden">
+                <div class="form-card-header">
+                    <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-500/20 border border-brand-400/30 shrink-0">
+                        <i data-lucide="library" class="w-5 h-5 text-brand-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-base font-black text-white leading-tight">Modelos de aplicação</h2>
+                        <p class="text-[11px] text-slate-400 font-medium mt-0.5">Grupos de produtos salvos na planilha, compartilhados com todos</p>
+                    </div>
+                </div>
+                <p class="p-4 text-xs text-slate-600">Todo grupo de produtos usado numa programação é salvo aqui automaticamente com o nome da aplicação. Para criar ou atualizar um modelo, use "Salvar como modelo" dentro da programação.</p>
+                <div class="px-4 pb-4"><button type="button" class="btn btn-ghost w-full" onclick="voltarDosModelos()"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar</button></div>
+            </div>
+            <div id="listaModelos" class="space-y-3"></div>
+        </section>
+
+        <!-- ================= EXECUÇÃO ================= -->
+        <section id="view-exec" class="hidden space-y-4">
+            <div id="execCabecalho"></div>
+            <div class="form-card p-4">
+                <label class="section-label">Quem está executando</label>
+                <input id="execNome" type="text" class="fld" placeholder="Seu nome" oninput="salvarLocal('executor', this.value)">
+            </div>
+            <div id="execJornada"></div>
+            <div id="execOperacoes" class="space-y-4"></div>
+        </section>
+    </main>
+
+    <!-- Área oculta onde as imagens são montadas -->
+    <div id="areaExport" style="position:fixed;left:-10000px;top:0;"></div>
+
+    <!-- Modal de imagem para compartilhar -->
+    <div id="imagemModal" class="hidden fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[92vh] flex flex-col fade-in">
+            <div class="p-4 border-b border-slate-100 flex items-center gap-2">
+                <i data-lucide="image" class="w-5 h-5 text-brand-600"></i>
+                <h3 id="imagemTitulo" class="font-black text-slate-800 flex-1">Imagem</h3>
+                <button type="button" onclick="fecharImagem()" class="p-1.5 rounded-lg hover:bg-slate-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-3 overflow-auto bg-slate-100 flex-1">
+                <img id="imagemPreview" class="w-full rounded-lg shadow" alt="Pré-visualização">
+            </div>
+            <div class="p-4 flex gap-2">
+                <button type="button" onclick="baixarImagem()" class="btn btn-ghost"><i data-lucide="download" class="w-4 h-4"></i> Baixar</button>
+                <button type="button" onclick="compartilharImagem()" class="btn flex-1 !py-3 text-white" style="background:#16a34a"><i data-lucide="send" class="w-4 h-4"></i> Enviar para o WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver a foto -->
+    <div id="fotoModal" class="hidden fixed inset-0 bg-black/85 z-50 flex flex-col items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+        <img id="fotoGrande" class="max-w-full max-h-[78vh] rounded-xl shadow-2xl bg-white" alt="Foto">
+        <div class="flex gap-2 mt-4">
+            <a id="fotoDrive" href="#" target="_blank" rel="noopener" class="btn btn-ghost"><i data-lucide="external-link" class="w-4 h-4"></i> Abrir no Drive</a>
+            <button type="button" class="btn btn-dark" onclick="document.getElementById('fotoModal').classList.add('hidden')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal de carregamento -->
+    <div id="loadingModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-6 flex flex-col items-center gap-3 shadow-2xl max-w-xs w-full">
+            <i data-lucide="loader-2" class="w-10 h-10 text-brand-500 spin"></i>
+            <p id="loadingText" class="font-bold text-slate-700 text-center">Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Modal de mensagem / confirmação -->
+    <div id="msgModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full fade-in">
+            <h3 id="msgTitulo" class="text-lg font-black text-slate-800 mb-2"></h3>
+            <p id="msgTexto" class="text-sm text-slate-600 mb-5 whitespace-pre-line"></p>
+            <input id="msgInput" type="text" class="fld mb-5 hidden">
+            <div class="flex gap-2 justify-end">
+                <button id="msgCancelar" type="button" class="btn btn-ghost hidden">Cancelar</button>
+                <button id="msgOk" type="button" class="btn btn-dark">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL /exec do Apps Script — só é usada quando este arquivo é aberto FORA do Apps Script.
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5RxfzPlps8VHiZRT3IilLjcZPsot9minMZf_Q2RXO9l0NEnLYeRnRZAp2eKUCesgH/exec';
+
+        // Exige foto do pH e do volume para marcar uma operação como FEITA.
+        const EXIGIR_FOTOS = true;
+
+        const CORES = {
+            verde:     { bg: '#38761d', fg: '#ffffff' },
+            pessego:   { bg: '#fce5cd', fg: '#1f2937' },
+            azulclaro: { bg: '#cfe2f3', fg: '#1f2937' },
+            amarelo:   { bg: '#ffe600', fg: '#1f2937' },
+            roxo:      { bg: '#c159c9', fg: '#ffffff' },
+            azul:      { bg: '#1155cc', fg: '#ffffff' },
+            laranja:   { bg: '#ff9900', fg: '#1f2937' },
+            petroleo:  { bg: '#134f5c', fg: '#ffffff' },
+            cinza:     { bg: '#e2e8f0', fg: '#1f2937' }
+        };
+
+        const TIPOS = ['PULVERIZAÇÃO FOLIAR', 'APLICAÇÃO EM DRENCH', 'DEFENSIVO INSETICIDA', 'DEFENSIVO FUNGICIDA', 'HERBICIDA', 'FERTIRRIGAÇÃO', 'OUTRO'];
+        const UNIDADES = ['L', 'mL', 'kg', 'g'];
+
+        let modelos = []; // carregados da aba "Modelos" da planilha (compartilhados entre todos)
+
+        const DIAS = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
+        const STATUS_LABEL = { PENDENTE: 'Pendente', PARCIAL: 'Em andamento', CONCLUIDA: 'Concluída', ATRASADA: 'Atrasada', FEITO: 'Feito', NAO_FEITO: 'Não feito' };
+
+        let programacoes = [];
+        let filtro = 'pendentes';
+        let editor = null;      // { id, operacoes: [...] }
+        let atual = null;       // programação aberta na execução
+        let rascunhos = {};     // rascunho de execução por operação
+        let editandoExec = {};  // operações registradas reabertas para alteração
+
+        // ------------------------------------------------------------
+        //  Comunicação com o Apps Script
+        // ------------------------------------------------------------
+        function dentroDoAppsScript() {
+            return typeof google !== 'undefined' && google.script && google.script.run;
+        }
+
+        function api(action, data) {
+            if (dentroDoAppsScript()) {
+                return new Promise((resolve, reject) => {
+                    google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err.message || err))).api(action, data);
+                });
+            }
+            if (!SCRIPT_URL) return Promise.reject(new Error('Configure a constante SCRIPT_URL com a URL /exec do Apps Script.'));
+            return fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action, data })
+            }).then(r => r.json()).then(r => {
+                if (!r.ok) throw new Error(r.error);
+                return r.data;
+            });
+        }
+
+        // ------------------------------------------------------------
+        //  Utilidades
+        // ------------------------------------------------------------
+        function esc(s) {
+            return String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function fmtData(iso) {
+            if (!iso) return '';
+            const [y, m, d] = String(iso).slice(0, 10).split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function diaDaSemana(iso) {
+            if (!iso) return '';
+            const [y, m, d] = iso.split('-').map(Number);
+            return DIAS[new Date(y, m - 1, d).getDay()];
+        }
+        function hojeISO() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function lerLocal(k) { try { return localStorage.getItem('fito_' + k) || ''; } catch (e) { return ''; } }
+        function salvarLocal(k, v) { try { localStorage.setItem('fito_' + k, v); } catch (e) {} }
+        function icones() { if (window.lucide) lucide.createIcons(); }
+        function cor(c) { return CORES[c] || CORES.cinza; }
+        function driveId(url) { const m = String(url).match(/[-\w]{25,}/); return m ? m[0] : ''; }
+        // ---------- Miniaturas das fotos (buscadas pelo servidor, não dependem do login no Drive) ----------
+        const miniCache = {};        // url do Drive -> data URL ('' = não foi possível carregar)
+        const miniCarregando = {};   // opId -> true enquanto busca
+
+        function imgFoto(url, rotulo) {
+            const dado = miniCache[url];
+            if (dado === undefined) {
+                return `<div class="thumb flex items-center justify-center" data-foto="${esc(url)}" title="Carregando foto...">
+                    <svg class="w-5 h-5 text-slate-400 spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div>`;
+            }
+            if (!dado) {
+                return `<a href="${esc(url)}" target="_blank" rel="noopener" class="thumb flex flex-col items-center justify-center text-[10px] font-bold text-slate-500 text-center" data-foto="${esc(url)}">
+                    <i data-lucide="image-off" class="w-5 h-5 mb-1"></i>Abrir no Drive</a>`;
+            }
+            return `<button type="button" onclick="verFoto(this.dataset.foto)" data-foto="${esc(url)}" class="p-0"><img class="thumb" src="${dado}" alt="${esc(rotulo || 'foto')}"></button>`;
+        }
+
+        function fotosDaOp(o) { return [].concat(o.fotosPh || [], o.fotosVolume || [], o.fotosOutras || []); }
+
+        /** Busca no servidor as miniaturas que faltam de uma operação e troca os "carregando" pelas fotos. */
+        async function buscarMiniaturas(o) {
+            if (!fotosDaOp(o).some(u => miniCache[u] === undefined) || miniCarregando[o.id]) return;
+            miniCarregando[o.id] = true;
+            try {
+                Object.assign(miniCache, await api('miniaturas', { opId: o.id }));
+            } catch (e) {
+                console.error('Erro ao carregar miniaturas:', e);
+            } finally {
+                delete miniCarregando[o.id];
+            }
+            fotosDaOp(o).forEach(u => {
+                if (miniCache[u] === undefined) miniCache[u] = '';
+                document.querySelectorAll('[data-foto]').forEach(el => { if (el.dataset.foto === u) el.outerHTML = imgFoto(u); });
+            });
+            icones();
+        }
+
+        function verFoto(url) {
+            document.getElementById('fotoGrande').src = miniCache[url] || '';
+            document.getElementById('fotoDrive').href = url;
+            document.getElementById('fotoModal').classList.remove('hidden');
+        }
+
+        function agoraHHMM() {
+            const d = new Date();
+            return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+        function minutos(h) {
+            if (!/^\d{2}:\d{2}$/.test(h || '')) return null;
+            const [hh, mm] = h.split(':').map(Number);
+            return hh * 60 + mm;
+        }
+        function fmtDuracao(min) {
+            if (min === null || isNaN(min) || min < 0) return '';
+            const h = Math.floor(min / 60), m = min % 60;
+            return h ? `${h}h${m ? String(m).padStart(2, '0') : ''}` : `${m} min`;
+        }
+        function diasEntre(isoA, isoB) {
+            const [a, b] = [isoA, isoB].map(s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d); });
+            return Math.round((b - a) / 86400000);
+        }
+        /** Duração da aplicação em minutos, considerando virada de dia. */
+        function duracaoAplicacao(dataProg, inicio, fim, mesmoDia, dataConclusao) {
+            const a = minutos(inicio), b = minutos(fim);
+            if (a === null || b === null) return null;
+            if (mesmoDia === 'NAO' && dataConclusao) return diasEntre(dataProg, dataConclusao) * 1440 + b - a;
+            return b - a;
+        }
+        /** Intervalo entre dois horários; se o fim for menor, passou da meia-noite. */
+        function intervalo(inicio, fim) {
+            const a = minutos(inicio), b = minutos(fim);
+            if (a === null || b === null) return null;
+            return b >= a ? b - a : b + 1440 - a;
+        }
+        function somarDias(iso, n) {
+            const [y, m, d] = iso.split('-').map(Number);
+            const dt = new Date(y, m - 1, d + n);
+            return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+        }
+        function resumoJornada(p) {
+            if (!p.equipeInicio) return '';
+            const total = p.equipeFim ? intervalo(p.equipeInicio, p.equipeFim) : null;
+            const descanso = p.descansoInicio ? intervalo(p.descansoInicio, p.descansoFim) : 0;
+            const trabalhado = total === null ? null : total - (descanso || 0);
+            return `Equipe: ${p.equipeInicio} → ${p.equipeFim || '…'}${p.descansoInicio ? ` · descanso ${p.descansoInicio}–${p.descansoFim}` : ''}${trabalhado !== null ? ` · ${fmtDuracao(trabalhado)} trabalhadas` : ''}`;
+        }
+
+        function statusProg(p) {
+            if (p.status !== 'CONCLUIDA' && p.data && p.data < hojeISO()) return 'ATRASADA';
+            return p.status || 'PENDENTE';
+        }
+
+        function carregando(on, texto) {
+            document.getElementById('loadingText').textContent = texto || 'Carregando...';
+            document.getElementById('loadingModal').classList.toggle('hidden', !on);
+        }
+
+        function mensagem(titulo, texto, { confirmar = false, okTexto = 'OK', entrada = null, senha = false } = {}) {
+            return new Promise(resolve => {
+                const m = document.getElementById('msgModal');
+                document.getElementById('msgTitulo').textContent = titulo;
+                document.getElementById('msgTexto').textContent = texto;
+                const ok = document.getElementById('msgOk');
+                const cancel = document.getElementById('msgCancelar');
+                const input = document.getElementById('msgInput');
+                ok.textContent = okTexto;
+                cancel.classList.toggle('hidden', !confirmar);
+                input.classList.toggle('hidden', entrada === null);
+                input.type = senha ? 'password' : 'text';
+                input.value = entrada || '';
+                const fechar = v => { m.classList.add('hidden'); resolve(v); };
+                ok.onclick = () => fechar(entrada === null ? true : input.value.trim());
+                cancel.onclick = () => fechar(entrada === null ? false : '');
+                input.onkeydown = e => { if (e.key === 'Enter') ok.onclick(); };
+                m.classList.remove('hidden');
+                if (entrada !== null) setTimeout(() => { input.focus(); input.select(); }, 50);
+            });
+        }
+
+        /** Pede um texto ao usuário. Retorna '' se cancelar. */
+        function perguntar(titulo, texto, valorInicial) {
+            return mensagem(titulo, texto, { confirmar: true, okTexto: 'Salvar', entrada: valorInicial || '' });
+        }
+
+        // ---------- Senha do programador ----------
+        // Fica só na memória desta aba: ao recarregar a página, a senha é pedida de novo.
+        let senhaProgramador = '';
+
+        async function pedirSenha() {
+            if (senhaProgramador) return true;
+            const senha = await mensagem('Senha do programador', 'Digite a senha para criar, editar ou excluir programações e modelos:', { confirmar: true, okTexto: 'Entrar', entrada: '', senha: true });
+            if (!senha) return false;
+            carregando(true, 'Verificando senha...');
+            try {
+                await api('verificarSenha', { senha });
+                senhaProgramador = senha;
+                carregando(false);
+                atualizarCadeado();
+                return true;
+            } catch (e) { erro(e); return false; }
+        }
+
+        /** Chama uma ação protegida enviando a senha; se a senha mudou no servidor, pede de novo na próxima vez. */
+        async function apiProtegida(action, data) {
+            try {
+                return await api(action, { ...data, senha: senhaProgramador });
+            } catch (e) {
+                if (/senha incorreta/i.test(e.message)) { senhaProgramador = ''; atualizarCadeado(); }
+                throw e;
+            }
+        }
+
+        function bloquearProgramador() {
+            senhaProgramador = '';
+            atualizarCadeado();
+            if (viewAtual === 'editor') irPara('lista');
+        }
+
+        function atualizarCadeado() {
+            document.getElementById('btnCadeado').classList.toggle('hidden', !senhaProgramador);
+        }
+
+        function erro(e) {
+            carregando(false);
+            mensagem('Erro', e && e.message ? e.message : String(e));
+        }
+
+        let viewAtual = 'lista';
+        let voltarPara = 'lista';
+
+        function irPara(view) {
+            viewAtual = view;
+            ['lista', 'editor', 'exec', 'modelos'].forEach(v => document.getElementById('view-' + v).classList.toggle('hidden', v !== view));
+            document.getElementById('btnNova').classList.toggle('hidden', view !== 'lista');
+            document.getElementById('btnAtualizar').classList.toggle('hidden', view !== 'lista');
+            document.getElementById('btnModelos').classList.toggle('hidden', view !== 'lista');
+            window.scrollTo(0, 0);
+            if (view === 'lista') renderLista();
+        }
+
+        /** Reduz a foto para envio rápido pela rede do campo. */
+        function comprimirImagem(file, maxLado = 1600, qualidade = 0.75) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => {
+                    const escala = Math.min(1, maxLado / Math.max(img.width, img.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * escala);
+                    canvas.height = Math.round(img.height * escala);
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    URL.revokeObjectURL(url);
+                    resolve(canvas.toDataURL('image/jpeg', qualidade));
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não foi possível ler a imagem.')); };
+                img.src = url;
+            });
+        }
+
+        // ------------------------------------------------------------
+        //  LISTA
+        // ------------------------------------------------------------
+        function setFiltro(f) {
+            filtro = f;
+            renderLista();
+        }
+
+        async function carregarLista() {
+            carregando(true, 'Buscando programações...');
+            try {
+                programacoes = await api('listar', {});
+                carregando(false);
+                renderLista();
+            } catch (e) { erro(e); }
+        }
+
+        function renderLista() {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.filtro === filtro));
+            const lista = programacoes.filter(p => {
+                if (filtro === 'pendentes') return p.status !== 'CONCLUIDA';
+                if (filtro === 'concluidas') return p.status === 'CONCLUIDA';
+                return true;
+            });
+            const el = document.getElementById('listaProgramacoes');
+            if (!lista.length) {
+                el.innerHTML = `<div class="form-card p-8 text-center text-slate-500">
+                    <i data-lucide="clipboard-list" class="w-10 h-10 mx-auto mb-2 text-slate-300"></i>
+                    <p class="font-bold">Nenhuma programação ${filtro === 'pendentes' ? 'pendente' : filtro === 'concluidas' ? 'concluída' : 'cadastrada'}.</p>
+                </div>`;
+                icones();
+                return;
+            }
+            el.innerHTML = lista.map(p => {
+                const st = statusProg(p);
+                const total = Number(p.totalOperacoes) || 0;
+                const feitas = Number(p.feitas) || 0;
+                const nao = Number(p.naoFeitas) || 0;
+                const pct = total ? Math.round(feitas / total * 100) : 0;
+                const podeExcluir = feitas + nao === 0;
+                return `<div class="form-card p-4 fade-in">
+                    <div class="flex gap-3 items-start">
+                        <div class="shrink-0 w-16 text-center rounded-xl bg-slate-900 text-white py-2">
+                            <div class="text-lg font-black leading-none">${esc(fmtData(p.data).slice(0, 5))}</div>
+                            <div class="text-[10px] font-bold text-slate-400 mt-1">${esc((p.diaSemana || '').slice(0, 3))}</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-black text-slate-800">Programação diária · ${esc(p.turno)}</span>
+                                <span class="chip st-${st}">${STATUS_LABEL[st]}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">${total} operações · por ${esc(p.responsavel || '—')}</p>
+                            <div class="mt-2 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500" style="width:${pct}%"></div>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1 font-bold">${feitas}/${total} feitas${nao ? ` · <span class="text-red-600">${nao} não feita(s)</span>` : ''}</p>
+                            ${p.equipeInicio ? `<p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>${esc(resumoJornada(p))}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button class="btn btn-dark flex-1" onclick="abrirExecucao('${esc(p.id)}')"><i data-lucide="clipboard-check" class="w-4 h-4"></i> Abrir checklist</button>
+                        <button class="btn btn-ghost" onclick="enviarImagemProgramacao('${esc(p.id)}')" title="Enviar imagem da programação"><i data-lucide="image" class="w-4 h-4"></i></button>
+                        <button class="btn btn-ghost" onclick="editarProgramacao('${esc(p.id)}')" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        ${podeExcluir ? `<button class="btn btn-danger" onclick="excluirProgramacao('${esc(p.id)}')" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            icones();
+        }
+
+        async function excluirProgramacao(id) {
+            if (!await pedirSenha()) return;
+            const p = programacoes.find(x => x.id === id);
+            const ok = await mensagem('Excluir programação', `Excluir a programação de ${fmtData(p.data)} (${p.turno})?`, { confirmar: true, okTexto: 'Excluir' });
+            if (!ok) return;
+            carregando(true, 'Excluindo...');
+            try {
+                await apiProtegida('excluir', { id });
+                programacoes = programacoes.filter(x => x.id !== id);
+                carregando(false);
+                renderLista();
+            } catch (e) { erro(e); }
+        }
+
+        // ------------------------------------------------------------
+        //  EDITOR (programador)
+        // ------------------------------------------------------------
+        function opVazia() {
+            return { bloco: '', semana: '', nomeAplicacao: '', tratamento: '', cor: 'cinza', tipoAplicacao: TIPOS[0], horario: 'após 17h', volumeCalda: '', instrucoes: '', produtos: [{ nome: '', dose: '', unidade: 'L' }], status: 'PENDENTE' };
+        }
+
+        async function novaProgramacao() {
+            if (!await pedirSenha()) return;
+            editor = { id: '', operacoes: [opVazia()] };
+            document.getElementById('editorTitulo').textContent = 'Nova programação diária';
+            document.getElementById('edData').value = hojeISO();
+            document.getElementById('edTurno').value = 'NOITE';
+            document.getElementById('edResp').value = lerLocal('programador');
+            document.getElementById('edObs').value = '';
+            atualizarDiaSemana();
+            renderEditor();
+            irPara('editor');
+        }
+
+        async function editarProgramacao(id) {
+            if (!await pedirSenha()) return;
+            carregando(true, 'Abrindo programação...');
+            try {
+                const p = await api('obter', { id });
+                carregando(false);
+                editor = { id: p.id, operacoes: p.operacoes.map(o => ({ ...o, produtos: o.produtos.length ? o.produtos : [{ nome: '', dose: '', unidade: 'L' }] })) };
+                document.getElementById('editorTitulo').textContent = 'Editar programação';
+                document.getElementById('edData').value = p.data;
+                document.getElementById('edTurno').value = p.turno || 'NOITE';
+                document.getElementById('edResp').value = p.responsavel;
+                document.getElementById('edObs').value = p.observacao;
+                atualizarDiaSemana();
+                renderEditor();
+                irPara('editor');
+            } catch (e) { erro(e); }
+        }
+
+        function atualizarDiaSemana() {
+            document.getElementById('edDia').value = diaDaSemana(document.getElementById('edData').value);
+        }
+
+        function setOp(i, campo, valor) { editor.operacoes[i][campo] = valor; }
+        function setProd(i, j, campo, valor) { editor.operacoes[i].produtos[j][campo] = valor; }
+
+        function aplicarModelo(i, id) {
+            const m = modelos.find(x => x.id === id);
+            if (!m) return;
+            const op = editor.operacoes[i];
+            Object.assign(op, {
+                nomeAplicacao: m.nome, tratamento: m.tratamento || m.nome, cor: m.cor || 'cinza', tipoAplicacao: m.tipoAplicacao || TIPOS[0],
+                volumeCalda: m.volumeCalda, instrucoes: m.instrucoes, horario: m.horario || op.horario,
+                produtos: m.produtos.length ? m.produtos.map(p => ({ ...p })) : [{ nome: '', dose: '', unidade: 'L' }]
+            });
+            renderEditor();
+        }
+
+        // ---------- Modelos compartilhados ----------
+        async function carregarModelos() {
+            try {
+                modelos = await api('modelos', {});
+                if (editor && !document.getElementById('view-editor').classList.contains('hidden')) renderEditor();
+                if (!document.getElementById('view-modelos').classList.contains('hidden')) renderModelos();
+            } catch (e) { console.error('Erro ao carregar modelos:', e); }
+        }
+
+        /** Salva a operação i como modelo (novo ou substituindo um existente com o mesmo nome). */
+        async function salvarComoModelo(i) {
+            if (!await pedirSenha()) return;
+            const o = editor.operacoes[i];
+            const produtos = o.produtos.filter(p => String(p.nome).trim());
+            if (!produtos.length) return mensagem('Atenção', 'Adicione pelo menos um produto antes de salvar o modelo.');
+            const nome = await perguntar('Salvar como modelo', 'Dê um nome para este grupo de produtos (ex.: APLICAÇÃO FASE 1, APLICAÇÃO FASE 2):', o.nomeAplicacao || o.tratamento);
+            if (!nome) return;
+            const existente = modelos.find(m => m.nome.trim().toLowerCase() === nome.trim().toLowerCase());
+            if (existente) {
+                const ok = await mensagem('Modelo já existe', `Já existe o modelo "${existente.nome}". Deseja substituí-lo pelos produtos e doses desta operação?`, { confirmar: true, okTexto: 'Substituir' });
+                if (!ok) return;
+            }
+            carregando(true, 'Salvando modelo...');
+            try {
+                await apiProtegida('salvarModelo', {
+                    id: existente ? existente.id : '', nome: nome.trim(), tratamento: o.tratamento, cor: o.cor, tipoAplicacao: o.tipoAplicacao,
+                    horario: o.horario, volumeCalda: o.volumeCalda, instrucoes: o.instrucoes, produtos, por: document.getElementById('edResp').value.trim()
+                });
+                o.nomeAplicacao = nome.trim();
+                await carregarModelos();
+                carregando(false);
+                renderEditor();
+                mensagem('Modelo salvo', `O modelo "${nome.trim()}" agora aparece para todos em "Usar modelo pronto".`);
+            } catch (e) { erro(e); }
+        }
+
+        function abrirModelos() {
+            voltarPara = viewAtual === 'editor' ? 'editor' : 'lista';
+            irPara('modelos');
+            renderModelos();
+            carregarModelos();
+        }
+
+        function renderModelos() {
+            const el = document.getElementById('listaModelos');
+            if (!modelos.length) {
+                el.innerHTML = '<div class="form-card p-8 text-center text-slate-500 font-bold">Nenhum modelo cadastrado ainda.</div>';
+                return;
+            }
+            el.innerHTML = modelos.map(m => {
+                const c = cor(m.cor);
+                return `<div class="form-card overflow-hidden fade-in">
+                    <div class="px-4 py-2.5 flex items-center gap-2" style="background:${c.bg};color:${c.fg}">
+                        <span class="font-black text-sm flex-1">${esc(m.nome)}</span>
+                        <button type="button" onclick="renomearModelo('${m.id}')" class="p-1.5 rounded-lg bg-black/10" title="Renomear"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="excluirModelo('${m.id}')" class="p-1.5 rounded-lg bg-black/10" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="p-3 text-sm space-y-1">
+                        ${m.tratamento && m.tratamento !== m.nome ? `<p class="font-bold text-slate-700">${esc(m.tratamento)}</p>` : ''}
+                        <p class="text-xs text-slate-500">${esc(m.tipoAplicacao)}${m.volumeCalda ? ' · calda ' + esc(m.volumeCalda) + ' L' : ''}</p>
+                        <p class="text-xs text-slate-700">${m.produtos.map(p => `<b>${esc(p.nome)}</b> ${esc(p.dose)} ${esc(p.unidade)}`).join(' · ')}</p>
+                        <p class="text-[11px] text-slate-400">${m.criadoPor ? 'Criado por ' + esc(m.criadoPor) + ' · ' : ''}atualizado em ${esc(m.atualizadoEm)}</p>
+                    </div>
+                </div>`;
+            }).join('');
+            icones();
+        }
+
+        function voltarDosModelos() {
+            irPara(voltarPara);
+            if (voltarPara === 'editor') renderEditor();
+        }
+
+        async function renomearModelo(id) {
+            if (!await pedirSenha()) return;
+            const m = modelos.find(x => x.id === id);
+            const nome = await perguntar('Renomear modelo', 'Novo nome da aplicação:', m.nome);
+            if (!nome || nome.trim() === m.nome) return;
+            carregando(true, 'Renomeando...');
+            try {
+                await apiProtegida('salvarModelo', { id, nome: nome.trim() });
+                await carregarModelos();
+                carregando(false);
+                renderModelos();
+            } catch (e) { erro(e); }
+        }
+
+        async function excluirModelo(id) {
+            if (!await pedirSenha()) return;
+            const m = modelos.find(x => x.id === id);
+            const ok = await mensagem('Excluir modelo', `Excluir o modelo "${m.nome}"? As programações já feitas não são alteradas.`, { confirmar: true, okTexto: 'Excluir' });
+            if (!ok) return;
+            carregando(true, 'Excluindo...');
+            try {
+                await apiProtegida('excluirModelo', { id });
+                modelos = modelos.filter(x => x.id !== id);
+                carregando(false);
+                renderModelos();
+            } catch (e) { erro(e); }
+        }
+
+        function adicionarOperacao() {
+            editor.operacoes.push(opVazia());
+            renderEditor();
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+        }
+
+        function duplicarOperacao(i) {
+            const o = editor.operacoes[i];
+            const copia = JSON.parse(JSON.stringify({ ...o, id: '', bloco: '', semana: '', status: 'PENDENTE' }));
+            editor.operacoes.splice(i + 1, 0, copia);
+            renderEditor();
+        }
+
+        function moverOperacao(i, dir) {
+            const j = i + dir;
+            if (j < 0 || j >= editor.operacoes.length) return;
+            [editor.operacoes[i], editor.operacoes[j]] = [editor.operacoes[j], editor.operacoes[i]];
+            renderEditor();
+        }
+
+        async function removerOperacao(i) {
+            const ok = await mensagem('Remover operação', 'Remover esta operação da programação?', { confirmar: true, okTexto: 'Remover' });
+            if (!ok) return;
+            editor.operacoes.splice(i, 1);
+            renderEditor();
+        }
+
+        function addProduto(i) { editor.operacoes[i].produtos.push({ nome: '', dose: '', unidade: 'L' }); renderEditor(); }
+        function remProduto(i, j) { editor.operacoes[i].produtos.splice(j, 1); renderEditor(); }
+
+        function renderEditor() {
+            const el = document.getElementById('editorOperacoes');
+            el.innerHTML = editor.operacoes.map((o, i) => {
+                const c = cor(o.cor);
+                const travada = o.status && o.status !== 'PENDENTE';
+                return `<div class="form-card overflow-hidden fade-in">
+                    <div class="px-4 py-3 flex items-center gap-2" style="background:${c.bg};color:${c.fg}">
+                        <span class="font-black text-sm flex-1 truncate">${i + 1}. ${o.bloco ? 'BLOCO ' + esc(o.bloco) : 'Nova operação'} ${o.tratamento ? '· ' + esc(o.tratamento) : ''}</span>
+                        ${travada ? `<span class="chip st-${o.status}">${STATUS_LABEL[o.status]}</span>` : ''}
+                        <button type="button" onclick="moverOperacao(${i},-1)" class="p-1.5 rounded-lg bg-black/10" title="Subir"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="moverOperacao(${i},1)" class="p-1.5 rounded-lg bg-black/10" title="Descer"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="duplicarOperacao(${i})" class="p-1.5 rounded-lg bg-black/10" title="Duplicar para outro bloco"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                        ${travada ? '' : `<button type="button" onclick="removerOperacao(${i})" class="p-1.5 rounded-lg bg-black/10" title="Remover"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`}
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3">
+                        <div class="col-span-2">
+                            <div class="flex items-center justify-between">
+                                <label class="section-label">Usar modelo pronto</label>
+                                <button type="button" onclick="abrirModelos()" class="text-[11px] font-black text-brand-600 mb-1">Gerenciar modelos</button>
+                            </div>
+                            <select class="fld" onchange="aplicarModelo(${i}, this.value)">
+                                <option value="">— Escolher modelo (preenche produtos e doses) —</option>
+                                ${modelos.map(m => `<option value="${esc(m.id)}">${esc(m.nome)}${m.tratamento && m.tratamento !== m.nome ? ' — ' + esc(m.tratamento) : ''}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="section-label">Nome da aplicação</label>
+                            <input class="fld" value="${esc(o.nomeAplicacao)}" placeholder="Ex.: APLICAÇÃO FASE 1" oninput="setOp(${i},'nomeAplicacao',this.value)">
+                        </div>
+                        <div>
+                            <label class="section-label">Bloco</label>
+                            <input class="fld" inputmode="numeric" value="${esc(o.bloco)}" placeholder="Ex.: 11" oninput="setOp(${i},'bloco',this.value)">
+                        </div>
+                        <div>
+                            <label class="section-label">Semana / fase</label>
+                            <input class="fld" value="${esc(o.semana)}" placeholder="Ex.: 03 ou finalizado" oninput="setOp(${i},'semana',this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="section-label">Tratamento (produtos)</label>
+                            <input class="fld" value="${esc(o.tratamento)}" placeholder="Ex.: ZINTRAC + BORTRAC" oninput="setOp(${i},'tratamento',this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="section-label">Cor da etiqueta</label>
+                            <div class="flex flex-wrap gap-2">
+                                ${Object.keys(CORES).map(k => `<button type="button" class="swatch ${o.cor === k ? 'sel' : ''}" style="background:${CORES[k].bg}" onclick="setOp(${i},'cor','${k}');renderEditor()" title="${k}"></button>`).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="section-label">Tipo de aplicação</label>
+                            <select class="fld" onchange="setOp(${i},'tipoAplicacao',this.value)">
+                                ${TIPOS.map(t => `<option ${o.tipoAplicacao === t ? 'selected' : ''}>${t}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="section-label">Horário</label>
+                            <input class="fld" value="${esc(o.horario)}" placeholder="Ex.: após 17h" oninput="setOp(${i},'horario',this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="section-label">Produtos e doses</label>
+                            <div class="space-y-2">
+                                ${o.produtos.map((p, j) => `<div class="flex gap-2">
+                                    <input class="fld flex-1 min-w-0" value="${esc(p.nome)}" placeholder="Produto" oninput="setProd(${i},${j},'nome',this.value)">
+                                    <input class="fld !w-20" inputmode="decimal" value="${esc(p.dose)}" placeholder="Dose" oninput="setProd(${i},${j},'dose',this.value)">
+                                    <select class="fld !w-20" onchange="setProd(${i},${j},'unidade',this.value)">
+                                        ${UNIDADES.map(u => `<option ${p.unidade === u ? 'selected' : ''}>${u}</option>`).join('')}
+                                    </select>
+                                    <button type="button" onclick="remProduto(${i},${j})" class="btn btn-ghost !px-2.5" title="Remover produto"><i data-lucide="x" class="w-4 h-4"></i></button>
+                                </div>`).join('')}
+                            </div>
+                            <button type="button" onclick="addProduto(${i})" class="mt-2 text-xs font-black text-brand-600 flex items-center gap-1"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar produto</button>
+                        </div>
+                        <div>
+                            <label class="section-label">Volume de calda (L)</label>
+                            <input class="fld" inputmode="decimal" value="${esc(o.volumeCalda)}" placeholder="Ex.: 600" oninput="setOp(${i},'volumeCalda',this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="section-label">Instruções de preparo</label>
+                            <textarea class="fld" rows="3" placeholder="Ordem de mistura, cuidados, pH..." oninput="setOp(${i},'instrucoes',this.value)">${esc(o.instrucoes)}</textarea>
+                        </div>
+                        <button type="button" onclick="salvarComoModelo(${i})" class="col-span-2 btn btn-ghost text-xs">
+                            <i data-lucide="bookmark-plus" class="w-4 h-4"></i> Salvar como modelo (fica disponível para todos)
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+            icones();
+        }
+
+        async function salvarProgramacao() {
+            const payload = {
+                id: editor.id,
+                data: document.getElementById('edData').value,
+                diaSemana: document.getElementById('edDia').value,
+                turno: document.getElementById('edTurno').value,
+                responsavel: document.getElementById('edResp').value.trim(),
+                observacao: document.getElementById('edObs').value.trim(),
+                operacoes: editor.operacoes.map(o => ({
+                    id: o.id || '', bloco: String(o.bloco).trim(), semana: String(o.semana).trim(), tratamento: String(o.tratamento).trim(),
+                    nomeAplicacao: String(o.nomeAplicacao || '').trim(),
+                    cor: o.cor, tipoAplicacao: o.tipoAplicacao, horario: o.horario, volumeCalda: o.volumeCalda, instrucoes: o.instrucoes,
+                    produtos: o.produtos.filter(p => String(p.nome).trim())
+                }))
+            };
+            if (!payload.responsavel) return mensagem('Atenção', 'Informe quem está programando.');
+            salvarLocal('programador', payload.responsavel);
+            carregando(true, 'Salvando programação...');
+            try {
+                const salva = await apiProtegida('salvar', payload);
+                programacoes = await api('listar', {});
+                carregarModelos();
+                carregando(false);
+                filtro = 'pendentes';
+                irPara('lista');
+                const enviar = await mensagem('Programação salva', `Programação de ${fmtData(payload.data)} (${payload.turno}) salva com ${payload.operacoes.length} operação(ões).\n\nDeseja enviar a imagem da programação para o grupo?`, { confirmar: true, okTexto: 'Enviar imagem' });
+                if (enviar) gerarImagemProgramacao(salva);
+            } catch (e) { erro(e); }
+        }
+
+        // ------------------------------------------------------------
+        //  EXECUÇÃO (quem aplica)
+        // ------------------------------------------------------------
+        async function abrirExecucao(id) {
+            carregando(true, 'Abrindo checklist...');
+            try {
+                atual = await api('obter', { id });
+                rascunhos = {};
+                editandoExec = {};
+                atual.operacoes.forEach(o => { rascunhos[o.id] = novoRascunho(o); });
+                document.getElementById('execNome').value = lerLocal('executor');
+                carregando(false);
+                renderExecucao();
+                irPara('exec');
+            } catch (e) { erro(e); }
+        }
+
+        function novoRascunho(o) {
+            return {
+                status: o.status === 'PENDENTE' ? '' : o.status, ph: o.phMedido || '', volume: o.volumeAplicado || '', obs: o.observacaoExec || '',
+                horaInicio: o.horaInicio || '', horaFim: o.horaFim || '', mesmoDia: o.mesmoDia || '',
+                dataConclusao: o.mesmoDia === 'NAO' ? o.dataConclusao : '',
+                fotos: { ph: [], volume: [], outras: [] }
+            };
+        }
+
+        // ---------- Jornada geral da equipe ----------
+        function renderJornada() {
+            const p = atual;
+            const campo = (id, rotulo, valor) => `<div>
+                <label class="section-label">${rotulo}</label>
+                <div class="flex gap-1">
+                    <input id="${id}" type="time" class="fld min-w-0" value="${esc(valor)}">
+                    <button type="button" class="btn btn-ghost !px-2 text-[11px]" onclick="document.getElementById('${id}').value=agoraHHMM()" title="Usar horário atual">Agora</button>
+                </div>
+            </div>`;
+            const resumo = resumoJornada(p);
+            document.getElementById('execJornada').innerHTML = `<div class="form-card overflow-hidden">
+                <div class="form-card-header !py-3">
+                    <i data-lucide="users" class="w-5 h-5 text-brand-400"></i>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-black text-white">Jornada da equipe</h3>
+                        <p class="text-[11px] text-slate-400">Horário geral de trabalho desta programação</p>
+                    </div>
+                </div>
+                <div class="p-4 grid grid-cols-2 gap-3">
+                    ${campo('jInicio', 'Começou a trabalhar', p.equipeInicio)}
+                    ${campo('jFim', 'Terminou o trabalho', p.equipeFim)}
+                    ${campo('jDescIni', 'Início do descanso', p.descansoInicio)}
+                    ${campo('jDescFim', 'Fim do descanso', p.descansoFim)}
+                    ${resumo ? `<p class="col-span-2 text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5">${esc(resumo)}${p.jornadaPor ? `<span class="block font-normal text-slate-400 mt-0.5">Registrado por ${esc(p.jornadaPor)} em ${esc(p.jornadaEm)}</span>` : ''}</p>` : ''}
+                    <button type="button" class="btn btn-dark col-span-2" onclick="salvarJornada()"><i data-lucide="save" class="w-4 h-4"></i> Salvar jornada</button>
+                </div>
+            </div>`;
+        }
+
+        async function salvarJornada() {
+            const v = id => document.getElementById(id).value;
+            const dados = { id: atual.id, equipeInicio: v('jInicio'), equipeFim: v('jFim'), descansoInicio: v('jDescIni'), descansoFim: v('jDescFim'), por: document.getElementById('execNome').value.trim() };
+            if (!dados.por) { document.getElementById('execNome').focus(); return mensagem('Atenção', 'Informe seu nome no campo "Quem está executando".'); }
+            if (!dados.equipeInicio) return mensagem('Atenção', 'Informe pelo menos o horário em que a equipe começou a trabalhar.');
+            if (!!dados.descansoInicio !== !!dados.descansoFim) return mensagem('Atenção', 'Informe o início e o fim do descanso.');
+            carregando(true, 'Salvando jornada...');
+            try {
+                const prog = await api('jornada', dados);
+                Object.assign(atual, prog);
+                const i = programacoes.findIndex(p => p.id === atual.id);
+                if (i >= 0) programacoes[i] = { ...programacoes[i], ...prog };
+                carregando(false);
+                renderJornada();
+                icones();
+                mensagem('Jornada salva', resumoJornada(atual));
+            } catch (e) { erro(e); }
+        }
+
+        function renderCabecalhoExec() {
+            const p = atual;
+            const st = statusProg(p);
+            const total = Number(p.totalOperacoes) || 0;
+            const feitas = Number(p.feitas) || 0;
+            const nao = Number(p.naoFeitas) || 0;
+            document.getElementById('execCabecalho').innerHTML = `<div class="form-card overflow-hidden">
+                <div class="bg-black text-white text-center py-3 font-black tracking-wide">PROGRAMAÇÃO DIÁRIA - ${esc(p.turno)}</div>
+                <div class="grid grid-cols-3 text-center text-xs border-b border-slate-200">
+                    <div class="p-2 border-r border-slate-200"><div class="section-label !mb-0">Data</div><div class="font-black">${esc(fmtData(p.data))}</div></div>
+                    <div class="p-2 border-r border-slate-200"><div class="section-label !mb-0">Dia da semana</div><div class="font-black">${esc(p.diaSemana)}</div></div>
+                    <div class="p-2"><div class="section-label !mb-0">Operações</div><div class="font-black">${total}</div></div>
+                </div>
+                <div class="p-4 flex items-center gap-3 flex-wrap">
+                    <span class="chip st-${st}">${STATUS_LABEL[st]}</span>
+                    <span class="text-xs text-slate-600 font-bold">${feitas}/${total} feitas${nao ? ` · <span class="text-red-600">${nao} não feita(s)</span>` : ''}</span>
+                    <span class="text-xs text-slate-400 ml-auto">Programado por ${esc(p.responsavel || '—')}</span>
+                    ${p.observacao ? `<p class="w-full text-sm bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3"><b>Obs.:</b> ${esc(p.observacao)}</p>` : ''}
+                </div>
+                <div class="px-4 pb-4">
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <button class="btn btn-ghost text-xs" onclick="enviarImagemProgramacao(atual.id)"><i data-lucide="image" class="w-4 h-4"></i> Imagem da programação</button>
+                        <button class="btn text-xs text-white" style="background:#16a34a" onclick="enviarResumoChecklist()"><i data-lucide="send" class="w-4 h-4"></i> Enviar resumo do checklist</button>
+                    </div>
+                    <button class="btn btn-ghost w-full" onclick="irPara('lista')"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar para a lista</button>
+                </div>
+            </div>`;
+        }
+
+        function renderExecucao() {
+            setTimeout(() => atual.operacoes.forEach(buscarMiniaturas), 0);
+            renderCabecalhoExec();
+            renderJornada();
+            document.getElementById('execOperacoes').innerHTML = atual.operacoes.map(cardExecucao).join('');
+            icones();
+        }
+
+        function renderCardExec(opId) {
+            const o = atual.operacoes.find(x => x.id === opId);
+            setTimeout(() => buscarMiniaturas(o), 0);
+            document.getElementById('card-' + opId).outerHTML = cardExecucao(o);
+            icones();
+        }
+
+        function fotosSalvas(urls, rotulo) {
+            if (!urls.length) return '';
+            return `<div class="flex flex-wrap gap-2 items-center"><span class="text-[11px] font-bold text-slate-500 w-full">${rotulo}</span>
+                ${urls.map(u => imgFoto(u, rotulo)).join('')}
+            </div>`;
+        }
+
+        function cardExecucao(o) {
+            const c = cor(o.cor);
+            const r = rascunhos[o.id];
+            const registrada = o.status !== 'PENDENTE';
+            const abrirForm = !registrada || editandoExec[o.id];
+
+            const plano = `
+                <div class="px-4 py-3 flex items-center gap-3 bg-black text-white">
+                    <div class="flex-1">
+                        <div class="font-black">BLOCO ${esc(o.bloco)}</div>
+                        <div class="text-[11px] text-slate-400 font-bold">${o.semana ? (isNaN(o.semana) ? esc(o.semana) : 'semana ' + esc(o.semana)) : ''}</div>
+                    </div>
+                    <span class="chip st-${o.status}">${STATUS_LABEL[o.status] || o.status}</span>
+                </div>
+                <div class="px-4 py-3 font-black text-center text-sm" style="background:${c.bg};color:${c.fg}">
+                    ${o.nomeAplicacao && o.nomeAplicacao !== o.tratamento ? `<div class="text-[11px] uppercase tracking-wider opacity-80">${esc(o.nomeAplicacao)}</div>` : ''}${esc(o.tratamento)}</div>
+                <div class="p-4 space-y-3">
+                    <div class="flex flex-wrap gap-2 text-xs font-bold">
+                        <span class="chip bg-slate-100 text-slate-700"><i data-lucide="spray-can" class="w-3 h-3"></i>${esc(o.tipoAplicacao)}</span>
+                        ${o.horario ? `<span class="chip bg-slate-100 text-slate-700"><i data-lucide="clock" class="w-3 h-3"></i>${esc(o.horario)}</span>` : ''}
+                        ${o.volumeCalda ? `<span class="chip bg-sky-100 text-sky-800"><i data-lucide="droplets" class="w-3 h-3"></i>Calda: ${esc(o.volumeCalda)} L</span>` : ''}
+                    </div>
+                    ${o.produtos.length ? `<table class="prod-table w-full rounded-xl overflow-hidden border border-slate-200">
+                        ${o.produtos.map(p => `<tr><td class="font-bold" style="background:${c.bg}22">${esc(p.nome)}</td><td class="text-right font-black whitespace-nowrap">${esc(p.dose)} ${esc(p.unidade)}</td></tr>`).join('')}
+                    </table>` : ''}
+                    ${o.instrucoes ? `<div class="text-sm bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700"><b class="text-slate-900">Preparo:</b> ${esc(o.instrucoes)}</div>` : ''}
+                </div>`;
+
+            let execucao;
+            if (!abrirForm) {
+                execucao = `<div class="border-t border-slate-100 p-4 space-y-3 ${o.status === 'FEITO' ? 'bg-green-50/60' : 'bg-red-50/60'}">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="${o.status === 'FEITO' ? 'check-circle-2' : 'x-circle'}" class="w-6 h-6 ${o.status === 'FEITO' ? 'text-green-600' : 'text-red-600'}"></i>
+                        <div class="flex-1 text-sm"><b>${o.status === 'FEITO' ? 'Feito' : 'Não feito'}</b> por ${esc(o.executor)}<div class="text-[11px] text-slate-500">${esc(o.executadoEm)}</div></div>
+                        <button class="btn btn-ghost !py-2 text-xs" onclick="editandoExec['${o.id}']=true;renderCardExec('${o.id}')"><i data-lucide="pencil" class="w-3.5 h-3.5"></i> Alterar</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        ${o.horaInicio ? `<div class="col-span-2 bg-white rounded-xl border border-slate-200 p-2">
+                            <span class="section-label !mb-0">Horário da aplicação</span>
+                            <b>${esc(o.horaInicio)} → ${esc(o.horaFim)}</b>
+                            ${(() => { const d = duracaoAplicacao(o.data, o.horaInicio, o.horaFim, o.mesmoDia, o.dataConclusao); return d !== null ? `<span class="text-slate-500"> · ${fmtDuracao(d)}</span>` : ''; })()}
+                            <div class="mt-1">${o.mesmoDia === 'NAO'
+                                ? `<span class="chip st-ATRASADA">Concluída em outro dia: ${esc(fmtData(o.dataConclusao))}</span>`
+                                : '<span class="chip st-FEITO">Concluída no mesmo dia</span>'}</div>
+                        </div>` : ''}
+                        <div class="bg-white rounded-xl border border-slate-200 p-2"><span class="section-label !mb-0">pH da calda</span><b>${esc(o.phMedido || '—')}</b></div>
+                        <div class="bg-white rounded-xl border border-slate-200 p-2"><span class="section-label !mb-0">Volume preparado</span><b>${o.volumeAplicado ? esc(o.volumeAplicado) + ' L' : '—'}</b></div>
+                    </div>
+                    ${o.observacaoExec ? `<p class="text-sm bg-white rounded-xl border border-slate-200 p-2"><b>Obs.:</b> ${esc(o.observacaoExec)}</p>` : ''}
+                    ${fotosSalvas(o.fotosPh, 'Fotos do pH')}
+                    ${fotosSalvas(o.fotosVolume, 'Fotos do volume')}
+                    ${fotosSalvas(o.fotosOutras, 'Outras fotos')}
+                </div>`;
+            } else {
+                const slot = (k, rotulo, icone, salvas) => `<div class="photo-slot">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black text-slate-700 flex items-center gap-1"><i data-lucide="${icone}" class="w-4 h-4"></i>${rotulo}</span>
+                        <label class="btn btn-ghost !py-1.5 !px-3 text-xs cursor-pointer">
+                            <i data-lucide="camera" class="w-4 h-4"></i> Foto
+                            <input type="file" accept="image/*" multiple class="hidden" onchange="anexarFotos('${o.id}','${k}',this)">
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${salvas.map(u => imgFoto(u, rotulo)).join('')}
+                        ${r.fotos[k].map((f, n) => `<div class="relative"><img class="thumb" src="${f}" alt="nova foto">
+                            <button type="button" onclick="removerFoto('${o.id}','${k}',${n})" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"><i data-lucide="x" class="w-3.5 h-3.5"></i></button></div>`).join('')}
+                        ${!salvas.length && !r.fotos[k].length ? '<span class="text-[11px] text-slate-400">Nenhuma foto anexada</span>' : ''}
+                    </div>
+                </div>`;
+
+                execucao = `<div class="border-t-4 border-slate-100 p-4 space-y-3">
+                    <span class="section-label">Resultado da aplicação</span>
+                    <div class="flex gap-3">
+                        <button type="button" class="exec-toggle ${r.status === 'FEITO' ? 'on-ok' : ''}" onclick="setExec('${o.id}','status','FEITO')"><i data-lucide="check" class="w-6 h-6"></i> FEITO</button>
+                        <button type="button" class="exec-toggle ${r.status === 'NAO_FEITO' ? 'on-nok' : ''}" onclick="setExec('${o.id}','status','NAO_FEITO')"><i data-lucide="x" class="w-6 h-6"></i> NÃO FEITO</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        ${['horaInicio', 'horaFim'].map(k => `<div>
+                            <label class="section-label">${k === 'horaInicio' ? 'Começou a aplicação' : 'Terminou a aplicação'}</label>
+                            <div class="flex gap-1">
+                                <input type="time" class="fld min-w-0" value="${esc(r[k])}" onchange="setExec('${o.id}','${k}',this.value)">
+                                <button type="button" class="btn btn-ghost !px-2 text-[11px]" onclick="setExec('${o.id}','${k}',agoraHHMM())" title="Usar horário atual">Agora</button>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                    <div>
+                        <label class="section-label">Concluída no mesmo dia da programação (${esc(fmtData(o.data))})?</label>
+                        <div class="flex gap-2">
+                            <button type="button" class="exec-toggle !h-11 !text-sm ${r.mesmoDia === 'SIM' ? 'on-ok' : ''}" onclick="setExec('${o.id}','mesmoDia','SIM')">SIM</button>
+                            <button type="button" class="exec-toggle !h-11 !text-sm ${r.mesmoDia === 'NAO' ? 'on-nok' : ''}" onclick="setMesmoDiaNao('${o.id}')">NÃO</button>
+                        </div>
+                        ${r.mesmoDia === 'NAO' ? `<div class="mt-2">
+                            <label class="section-label">Data em que foi concluída</label>
+                            <input type="date" class="fld" value="${esc(r.dataConclusao)}" min="${esc(somarDias(o.data, 1))}" onchange="setExec('${o.id}','dataConclusao',this.value)">
+                        </div>` : ''}
+                        ${(() => {
+                            const d = duracaoAplicacao(o.data, r.horaInicio, r.horaFim, r.mesmoDia, r.dataConclusao);
+                            if (d === null) return '';
+                            if (d < 0) return '<p class="text-xs font-bold text-red-600 mt-2">O fim ficou antes do início. Se passou da meia-noite, marque NÃO e informe a data de conclusão.</p>';
+                            return `<p class="text-xs font-bold text-slate-500 mt-2">Duração: ${fmtDuracao(d)}</p>`;
+                        })()}
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="section-label">pH da calda</label>
+                            <input class="fld" inputmode="decimal" value="${esc(r.ph)}" placeholder="Ex.: 6,0" oninput="rascunhos['${o.id}'].ph=this.value">
+                        </div>
+                        <div>
+                            <label class="section-label">Volume preparado (L)</label>
+                            <input class="fld" inputmode="decimal" value="${esc(r.volume)}" placeholder="${esc(o.volumeCalda || 'Ex.: 600')}" oninput="rascunhos['${o.id}'].volume=this.value">
+                        </div>
+                    </div>
+                    ${slot('ph', 'Foto do pH da calda', 'flask-conical', o.fotosPh)}
+                    ${slot('volume', 'Foto do volume da calda', 'droplets', o.fotosVolume)}
+                    ${slot('outras', 'Outras fotos (opcional)', 'image', o.fotosOutras)}
+                    <div>
+                        <label class="section-label">Observação ${r.status === 'NAO_FEITO' ? '<span class="text-red-600">(obrigatória: por que não foi feito?)</span>' : '(opcional)'}</label>
+                        <textarea class="fld" rows="2" placeholder="Ex.: chuva, falta de produto, problema na bomba..." oninput="rascunhos['${o.id}'].obs=this.value">${esc(r.obs)}</textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        ${registrada ? `<button type="button" class="btn btn-ghost" onclick="cancelarEdicaoExec('${o.id}')">Cancelar</button>` : ''}
+                        <button type="button" class="btn btn-primary flex-1 !py-3" onclick="registrar('${o.id}')"><i data-lucide="cloud-upload" class="w-5 h-5"></i> Salvar bloco ${esc(o.bloco)}</button>
+                    </div>
+                </div>`;
+            }
+
+            return `<div id="card-${o.id}" class="form-card overflow-hidden">${plano}${execucao}</div>`;
+        }
+
+        function setExec(opId, campo, valor) {
+            rascunhos[opId][campo] = valor;
+            renderCardExec(opId);
+        }
+
+        function setMesmoDiaNao(opId) {
+            const r = rascunhos[opId];
+            const o = atual.operacoes.find(x => x.id === opId);
+            r.mesmoDia = 'NAO';
+            if (!r.dataConclusao) r.dataConclusao = somarDias(o.data, 1);
+            renderCardExec(opId);
+        }
+
+        function cancelarEdicaoExec(opId) {
+            delete editandoExec[opId];
+            rascunhos[opId] = novoRascunho(atual.operacoes.find(x => x.id === opId));
+            renderCardExec(opId);
+        }
+
+        async function anexarFotos(opId, tipo, input) {
+            const arquivos = Array.from(input.files).filter(f => f.type.startsWith('image/'));
+            input.value = '';
+            if (!arquivos.length) return;
+            const lista = rascunhos[opId].fotos[tipo];
+            if (lista.length + arquivos.length > 4) return mensagem('Limite de fotos', 'Envie no máximo 4 fotos de cada tipo por vez.');
+            carregando(true, 'Preparando fotos...');
+            try {
+                for (const f of arquivos) lista.push(await comprimirImagem(f));
+                carregando(false);
+                renderCardExec(opId);
+            } catch (e) { erro(e); }
+        }
+
+        function removerFoto(opId, tipo, n) {
+            rascunhos[opId].fotos[tipo].splice(n, 1);
+            renderCardExec(opId);
+        }
+
+        async function registrar(opId) {
+            const o = atual.operacoes.find(x => x.id === opId);
+            const r = rascunhos[opId];
+            const executor = document.getElementById('execNome').value.trim();
+
+            if (!executor) { document.getElementById('execNome').focus(); return mensagem('Atenção', 'Informe seu nome no campo "Quem está executando".'); }
+            if (!r.status) return mensagem('Atenção', `Marque se o bloco ${o.bloco} foi FEITO ou NÃO FEITO.`);
+            if (r.status === 'NAO_FEITO' && !r.obs.trim()) return mensagem('Atenção', 'Explique na observação por que a operação não foi feita.');
+            if (r.status === 'FEITO') {
+                if (!r.horaInicio || !r.horaFim) return mensagem('Atenção', 'Informe o horário em que a aplicação começou e terminou.');
+                if (!r.mesmoDia) return mensagem('Atenção', 'Informe se a aplicação foi concluída no mesmo dia.');
+                if (r.mesmoDia === 'NAO' && !r.dataConclusao) return mensagem('Atenção', 'Informe a data em que a aplicação foi concluída.');
+                if (duracaoAplicacao(o.data, r.horaInicio, r.horaFim, r.mesmoDia, r.dataConclusao) < 0) {
+                    return mensagem('Atenção', 'O horário de fim ficou antes do início. Se passou da meia-noite, marque NÃO em "concluída no mesmo dia".');
+                }
+                if (!r.ph.trim() || !r.volume.trim()) return mensagem('Atenção', 'Informe o pH e o volume da calda preparada.');
+                if (EXIGIR_FOTOS) {
+                    if (!r.fotos.ph.length && !o.fotosPh.length) return mensagem('Foto obrigatória', 'Anexe a foto do pH da calda.');
+                    if (!r.fotos.volume.length && !o.fotosVolume.length) return mensagem('Foto obrigatória', 'Anexe a foto do volume da calda.');
+                }
+            }
+
+            const nFotos = r.fotos.ph.length + r.fotos.volume.length + r.fotos.outras.length;
+            carregando(true, nFotos ? `Enviando ${nFotos} foto(s) para o Drive...` : 'Salvando...');
+            try {
+                const res = await api('registrar', {
+                    opId, executor, status: r.status, phMedido: r.ph.trim(), volumeAplicado: r.volume.trim(), observacao: r.obs.trim(), fotos: r.fotos,
+                    horaInicio: r.horaInicio, horaFim: r.horaFim, mesmoDia: r.mesmoDia, dataConclusao: r.dataConclusao
+                });
+                const idx = atual.operacoes.findIndex(x => x.id === opId);
+                const antes = atual.operacoes[idx];
+                [['fotosPh', 'ph'], ['fotosVolume', 'volume'], ['fotosOutras', 'outras']].forEach(([campo, k]) => {
+                    const novas = res.operacao[campo].slice(antes[campo].length);
+                    novas.forEach((url, n) => { if (r.fotos[k][n]) miniCache[url] = r.fotos[k][n]; });
+                });
+                atual.operacoes[idx] = res.operacao;
+                Object.assign(atual, res.programacao);
+                rascunhos[opId] = novoRascunho(res.operacao);
+                delete editandoExec[opId];
+                const i = programacoes.findIndex(p => p.id === atual.id);
+                if (i >= 0) programacoes[i] = { ...programacoes[i], ...res.programacao };
+                carregando(false);
+                renderCabecalhoExec();
+                renderCardExec(opId);
+                if (res.programacao.status === 'CONCLUIDA') mensagem('Programação concluída', 'Todas as operações desta programação foram feitas.');
+            } catch (e) { erro(e); }
+        }
+
+        // ------------------------------------------------------------
+        //  IMAGENS PARA O GRUPO (html-to-image)
+        // ------------------------------------------------------------
+        let imagemAtual = null; // { dataUrl, arquivo, texto, nomeArquivo }
+
+        const T = 'border:1.5px solid #111;padding:6px 8px;';
+        const TH = T + 'background:#000;color:#fff;font-weight:800;text-align:center;';
+
+        async function enviarImagemProgramacao(id) {
+            if (atual && atual.id === id && viewAtual === 'exec') return gerarImagemProgramacao(atual);
+            carregando(true, 'Abrindo programação...');
+            try {
+                const p = await api('obter', { id });
+                carregando(false);
+                gerarImagemProgramacao(p);
+            } catch (e) { erro(e); }
+        }
+
+        /** Monta a imagem no mesmo formato da planilha "PROGRAMAÇÃO DIÁRIA". */
+        function gerarImagemProgramacao(p) {
+            const linhas = p.operacoes.map(o => {
+                const c = cor(o.cor);
+                const prods = o.produtos.length ? o.produtos : [{ nome: '—', dose: '', unidade: '' }];
+                const n = prods.length;
+                const semana = o.semana ? (isNaN(o.semana) ? o.semana : 'semana ' + o.semana) : '';
+                return prods.map((pr, k) => `<tr>
+                    ${k === 0 ? `
+                    <td rowspan="${n}" style="${T}text-align:center;font-weight:800;width:110px;">BLOCO ${esc(o.bloco)}<div style="font-weight:600;font-size:12px;">${esc(semana)}</div></td>
+                    <td rowspan="${n}" style="${T}background:#000;color:#fff;text-align:center;font-weight:800;width:90px;">${esc(p.turno)}</td>
+                    <td rowspan="${n}" style="${T}background:${c.bg};color:${c.fg};text-align:center;font-weight:800;width:190px;">
+                        ${o.nomeAplicacao && o.nomeAplicacao !== o.tratamento ? `<div style="font-size:11px;opacity:.85;">${esc(o.nomeAplicacao)}</div>` : ''}${esc(o.tratamento)}</td>
+                    <td rowspan="${n}" style="${T}text-align:center;font-weight:800;width:150px;">${esc(o.tipoAplicacao)}${o.horario ? `<div style="font-weight:600;font-size:12px;">(${esc(o.horario)})</div>` : ''}</td>` : ''}
+                    <td style="${T}background:${c.bg};color:${c.fg};text-align:center;font-weight:700;width:150px;">${esc(pr.nome)}</td>
+                    <td style="${T}text-align:center;font-weight:700;width:70px;white-space:nowrap;">${esc(pr.dose)} ${esc(pr.unidade)}</td>
+                    ${k === 0 ? `
+                    <td rowspan="${n}" style="${T}text-align:center;font-weight:800;width:90px;white-space:nowrap;">${o.volumeCalda ? esc(o.volumeCalda) + ' LITROS' : ''}</td>
+                    <td rowspan="${n}" style="${T}font-size:12px;">${esc(o.instrucoes)}</td>` : ''}
+                </tr>`).join('') + '<tr><td colspan="8" style="height:10px;"></td></tr>';
+            }).join('');
+
+            const html = `<div style="width:1150px;background:#fff;padding:16px;font-family:Arial,Helvetica,sans-serif;color:#111;font-size:13px;">
+                <div style="background:#000;color:#fff;text-align:center;font-size:24px;font-weight:900;padding:10px;">PROGRAMAÇÃO DIÁRIA - ${esc(p.turno)}</div>
+                <table style="border-collapse:collapse;margin:8px 0 14px;">
+                    <tr><td style="${TH}">DATA</td><td style="${T}font-weight:800;text-align:center;min-width:110px;">${esc(fmtData(p.data))}</td><td style="${TH}">TOTAL DE OPERAÇÕES</td></tr>
+                    <tr><td style="${TH}">DIA DA SEMANA</td><td style="${T}font-weight:800;text-align:center;">${esc(p.diaSemana)}</td><td style="${T}font-weight:800;text-align:center;">${p.operacoes.length}</td></tr>
+                </table>
+                <table style="border-collapse:collapse;width:100%;">${linhas}</table>
+                ${p.observacao ? `<div style="margin-top:6px;padding:8px;border:1.5px solid #d97706;background:#fffbeb;"><b>OBS.:</b> ${esc(p.observacao)}</div>` : ''}
+                <div style="margin-top:8px;font-size:11px;color:#555;">Programado por ${esc(p.responsavel || '—')}</div>
+            </div>`;
+            const texto = `*PROGRAMAÇÃO DIÁRIA - ${p.turno}*\n📅 ${fmtData(p.data)} (${p.diaSemana})\n🧪 ${p.operacoes.length} operação(ões)\n👤 Programado por ${p.responsavel || '—'}`;
+            return gerarImagem(html, `Programacao_${p.data}_${p.turno}.png`, texto, 'Imagem da programação');
+        }
+
+        /** Resumo do que foi feito no checklist, para enviar ao grupo no fim do trabalho. */
+        function enviarResumoChecklist() {
+            const p = atual;
+            const pendentes = p.operacoes.filter(o => o.status === 'PENDENTE').length;
+            const statusTxt = st => st === 'FEITO' ? '<span style="color:#15803d;font-weight:900;">✔ FEITO</span>'
+                : st === 'NAO_FEITO' ? '<span style="color:#b91c1c;font-weight:900;">✖ NÃO FEITO</span>'
+                : '<span style="color:#b45309;font-weight:900;">PENDENTE</span>';
+            const linhas = p.operacoes.map(o => {
+                const c = cor(o.cor);
+                const dur = duracaoAplicacao(o.data, o.horaInicio, o.horaFim, o.mesmoDia, o.dataConclusao);
+                const horario = o.horaInicio
+                    ? `${esc(o.horaInicio)} → ${esc(o.horaFim)}${dur !== null && dur >= 0 ? `<div style="font-size:11px;color:#555;">${fmtDuracao(dur)}</div>` : ''}`
+                    : '—';
+                const dia = !o.mesmoDia ? '—' : o.mesmoDia === 'SIM' ? 'Sim'
+                    : `<span style="color:#b91c1c;font-weight:700;">Não (${esc(fmtData(o.dataConclusao).slice(0, 5))})</span>`;
+                return `<tr>
+                    <td style="${T}text-align:center;font-weight:800;white-space:nowrap;">BLOCO ${esc(o.bloco)}</td>
+                    <td style="${T}background:${c.bg};color:${c.fg};font-weight:800;text-align:center;">${o.nomeAplicacao && o.nomeAplicacao !== o.tratamento ? `<div style="font-size:10px;opacity:.85;">${esc(o.nomeAplicacao)}</div>` : ''}${esc(o.tratamento)}</td>
+                    <td style="${T}text-align:center;">${statusTxt(o.status)}</td>
+                    <td style="${T}text-align:center;white-space:nowrap;">${horario}</td>
+                    <td style="${T}text-align:center;">${dia}</td>
+                    <td style="${T}text-align:center;font-weight:800;">${esc(o.phMedido || '—')}</td>
+                    <td style="${T}text-align:center;font-weight:800;white-space:nowrap;">${o.volumeAplicado ? esc(o.volumeAplicado) + ' L' : '—'}${o.volumeCalda ? `<div style="font-size:10px;color:#555;">prog.: ${esc(o.volumeCalda)} L</div>` : ''}</td>
+                    <td style="${T}">${esc(o.executor || '')}</td>
+                    <td style="${T}font-size:11px;">${esc(o.observacaoExec || '')}</td>
+                </tr>`;
+            }).join('');
+            const st = statusProg(p);
+            const corSt = { CONCLUIDA: '#15803d', PARCIAL: '#1d4ed8', PENDENTE: '#b45309', ATRASADA: '#b91c1c' }[st];
+            const jornada = resumoJornada(p);
+            const feitas = Number(p.feitas) || 0;
+            const nao = Number(p.naoFeitas) || 0;
+
+            const html = `<div style="width:1100px;background:#fff;padding:16px;font-family:Arial,Helvetica,sans-serif;color:#111;font-size:13px;">
+                <div style="background:#000;color:#fff;text-align:center;font-size:24px;font-weight:900;padding:10px;">RESUMO DO CHECKLIST - ${esc(p.turno)}</div>
+                <table style="border-collapse:collapse;margin:8px 0 10px;">
+                    <tr><td style="${TH}">DATA</td><td style="${T}font-weight:800;text-align:center;min-width:110px;">${esc(fmtData(p.data))}</td>
+                        <td style="${TH}">STATUS</td><td style="${T}font-weight:900;text-align:center;color:${corSt};">${STATUS_LABEL[st].toUpperCase()}</td></tr>
+                    <tr><td style="${TH}">DIA DA SEMANA</td><td style="${T}font-weight:800;text-align:center;">${esc(p.diaSemana)}</td>
+                        <td style="${TH}">FEITAS</td><td style="${T}font-weight:800;text-align:center;">${feitas} de ${p.operacoes.length}${nao ? ` · ${nao} não feita(s)` : ''}${pendentes ? ` · ${pendentes} pendente(s)` : ''}</td></tr>
+                </table>
+                ${jornada ? `<div style="margin-bottom:10px;padding:8px;border:1.5px solid #111;background:#f1f5f9;font-weight:700;">⏱ ${esc(jornada)}</div>` : ''}
+                <table style="border-collapse:collapse;width:100%;">
+                    <tr>${['BLOCO', 'APLICAÇÃO', 'STATUS', 'HORÁRIO', 'MESMO DIA', 'pH', 'VOLUME', 'EXECUTOR', 'OBSERVAÇÃO'].map(h => `<td style="${TH}font-size:12px;">${h}</td>`).join('')}</tr>
+                    ${linhas}
+                </table>
+                <div style="margin-top:8px;font-size:11px;color:#555;">Fotos do pH e do volume salvas no Google Drive · gerado em ${new Date().toLocaleString('pt-BR')}</div>
+            </div>`;
+            const texto = `*RESUMO DO CHECKLIST - ${p.turno}*\n📅 ${fmtData(p.data)} (${p.diaSemana})\n✅ ${feitas} de ${p.operacoes.length} feitas`
+                + (nao ? `\n❌ ${nao} não feita(s)` : '') + (pendentes ? `\n⏳ ${pendentes} pendente(s)` : '') + (jornada ? `\n⏱ ${jornada}` : '');
+            return gerarImagem(html, `Resumo_checklist_${p.data}_${p.turno}.png`, texto, 'Resumo do checklist');
+        }
+
+        async function gerarImagem(html, nomeArquivo, texto, titulo) {
+            if (!window.htmlToImage) return mensagem('Erro', 'A biblioteca de imagem não carregou. Verifique a internet e recarregue a página.');
+            carregando(true, 'Gerando imagem...');
+            const area = document.getElementById('areaExport');
+            area.innerHTML = html;
+            try {
+                const alvo = area.firstElementChild;
+                const dataUrl = await htmlToImage.toPng(alvo, { pixelRatio: 2, backgroundColor: '#ffffff', width: alvo.offsetWidth, height: alvo.offsetHeight });
+                const blob = await (await fetch(dataUrl)).blob();
+                imagemAtual = { dataUrl, texto, nomeArquivo, arquivo: new File([blob], nomeArquivo, { type: 'image/png' }) };
+                document.getElementById('imagemTitulo').textContent = titulo;
+                document.getElementById('imagemPreview').src = dataUrl;
+                carregando(false);
+                document.getElementById('imagemModal').classList.remove('hidden');
+            } catch (e) {
+                erro(new Error('Não foi possível gerar a imagem: ' + (e.message || e)));
+            } finally {
+                area.innerHTML = '';
+            }
+        }
+
+        // O compartilhamento precisa partir de um toque do usuário, por isso fica no botão do modal.
+        async function compartilharImagem() {
+            if (!imagemAtual) return;
+            const { arquivo, texto } = imagemAtual;
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+                try {
+                    await navigator.share({ files: [arquivo], text: texto });
+                    fecharImagem();
+                } catch (e) { console.log('Compartilhamento cancelado:', e); }
+                return;
+            }
+            // Sem suporte (computador ou dentro do Apps Script): baixa a imagem e abre o WhatsApp com o texto
+            baixarImagem();
+            setTimeout(() => window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank'), 800);
+            mensagem('Imagem baixada', 'A imagem foi salva no aparelho. No WhatsApp, escolha o grupo e anexe a imagem baixada.');
+        }
+
+        function baixarImagem() {
+            if (!imagemAtual) return;
+            const a = document.createElement('a');
+            a.href = imagemAtual.dataUrl;
+            a.download = imagemAtual.nomeArquivo;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        function fecharImagem() {
+            document.getElementById('imagemModal').classList.add('hidden');
+        }
+
+        // ------------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            icones();
+            irPara('lista');
+            carregarLista();
+            carregarModelos();
+        });
+    </script>
+</body>
+</html>
